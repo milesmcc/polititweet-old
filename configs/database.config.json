@@ -1,0 +1,7 @@
+{
+  "databaseLocation": "/mnt/volume-nyc1-01/polititweet/database/",
+  "mongodb": {
+    "address": "localhost",
+    "port": 27017
+  }
+}
