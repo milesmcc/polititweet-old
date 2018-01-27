@@ -48,7 +48,7 @@
 <body>
   {% include "navbar.html" %}
   <div class="container main">
-        <h2>Latest Deleted Tweets</h2> <small>{{count}} deleted tweets in database</small>
+        <h2>Latest Deleted Tweets</h2> <small>showing latest {{count}} deleted tweets in database</small>
         <hr>
         {% set i = 0 %}
         {% for status in deleted[:200] %}

@@ -36,11 +36,6 @@
           <hr>
         </div>
         <hr>
-        {% if figure["deleted"] %}
-        <p style="color: red;">This account has been deleted.</p>
-        {% else %}
-        <p style="color: green;">This account has not been deleted.</p>
-        {% end %}
         {% if figure["deleted_tweets_length"] == 1 %}
         <span class="label label-danger">{{figure["deleted_tweets_length"]}} DELETED TWEET</span>
         {% end %}

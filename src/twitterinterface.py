@@ -44,11 +44,6 @@ def getAllStatuses(id, lowest_archived_status=-1):
         time.sleep(1)  # to avoid rate limiting
     return statuses
 
-
-def hasTweetArchive(id):
-    return os.path.exists(database_location + "accounts/" + str(id) + "/tweets")
-
-
 def getAllStatusesSince(id, since):
     # TODO: fix this too-works, but is shaky
     statuses = api.GetUserTimeline(user_id=id, include_rts=False, count=200, trim_user=True, since_id=since)
