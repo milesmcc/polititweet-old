@@ -1,5 +1,5 @@
 tornado
 tweepy
-python-twitter
 requests
+python-twitter
 pymongo
