@@ -3,7 +3,6 @@
   "consumerSecret": "XXXXX",
   "accessTokenKey": "XXXXX-XXXXX",
   "accessTokenSecret": "XXXXX",
-  "monitorList": "list:polititweetorg/monitored-accounts",
   "monitorListOwner": "polititweetorg",
   "monitorListSlug": "monitored-accounts"
 }

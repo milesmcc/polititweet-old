@@ -23,7 +23,7 @@ def loadDatabase():
 
     print("Loading database...")
     following = []
-    following.extend([account.id for account in twitterinterface.api.GetListMembers(owner_screen_name=config["monitorListOwner"], slug=config["monitorListSlug"])])
+    following.extend([account.id for account in twitterinterface.getListMembers(account_name=config["monitorListOwner"], slug=config["monitorListSlug"])])
     friend_data = twitterinterface.api.GetFriends()
     for account in friend_data:
         database.writeAccountData(account.AsDict())

@@ -23,6 +23,12 @@ def getAccount(id):
     return api.GetUser(user_id=id).AsDict()
 
 """
+Get list member IDs.
+"""
+def getListMembers(account_name, slug):
+    return [account.id for account in api.GetListMembers(owner_screen_name=account_name, slug=slug)]
+
+"""
 Get the last 3200 statuses of a user from Twitter.
 """
 def getAllStatuses(id, lowest_archived_status=-1):

@@ -61,7 +61,6 @@ def getDeletedTweets(user_id):
     return [clean(t) for t in db.tweets.find({'deleted': True, "user.id": int(user_id)}).sort([("id", pymongo.DESCENDING)])]
 
 def getDeletedTweetsCount(user_id):
-    print(db.tweets.find({'deleted': True, "user.id": int(user_id)}).count())
     return db.tweets.find({'deleted': True, "user.id": int(user_id)}).count()
 
 def getAllAccounts():
