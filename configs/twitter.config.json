@@ -5,5 +5,5 @@
   "accessTokenSecret": "XXXXX",
   "monitorList": "list:polititweetorg/monitored-accounts",
   "monitorListOwner": "polititweetorg",
-  "monitorListName": "monitored-accounts"
+  "monitorListSlug": "monitored-accounts"
 }

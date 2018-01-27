@@ -3,7 +3,7 @@ import database
 from random import shuffle
 import json
 
-config_location = "../configs_real/database.config.json"
+config_location = "../configs_real/twitter.config.json"
 config = json.load(open(config_location, "r"))
 
 following = [802399136012177408, 945391013828313088]
@@ -23,7 +23,7 @@ def loadDatabase():
 
     print("Loading database...")
     following = []
-    following.extend(twitterinterface.api.GetListMembers(owner_screen_name=config["monitorListOwner"], slug="monitored-accounts"))
+    following.extend([account.id for account in twitterinterface.api.GetListMembers(owner_screen_name=config["monitorListOwner"], slug=config["monitorListSlug"])])
     friend_data = twitterinterface.api.GetFriends()
     for account in friend_data:
         database.writeAccountData(account.AsDict())
@@ -38,6 +38,8 @@ Only run this for accounts that exist on Twitter.
 def smarchive(id):
     print("Smarchiving " + str(id) + "...")
     tweets = twitterinterface.getAllStatuses(id)
+    account = twitterinterface.getAccount(id)
+    database.writeAccountData(account)
     print("Retrieved " + str(len(tweets)) + " tweets from Twitter. Archiving...")
     for tweet in tweets:
         tweet_dict = tweet.AsDict()

@@ -17,6 +17,12 @@ api = twitter.Api(consumer_key=consumer_key,
                   sleep_on_rate_limit=True)
 
 """
+Get the given user as a dictionary.
+"""
+def getAccount(id):
+    return api.GetUser(user_id=id).AsDict()
+
+"""
 Get the last 3200 statuses of a user from Twitter.
 """
 def getAllStatuses(id, lowest_archived_status=-1):
@@ -28,7 +34,6 @@ def getAllStatuses(id, lowest_archived_status=-1):
     if lowest_archived_status < max_id and lowest_archived_status != -1: # for redundancy
         max_id = lowest_archived_status
     print("Lowest archived status: " + str(lowest_archived_status))
-    print(api.GetUser(user_id=id).AsDict())
     while len(statuses) < api.GetUser(user_id=id).statuses_count:
         try:
             print("    ...from " + str(max_id))
