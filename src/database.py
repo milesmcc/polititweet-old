@@ -10,7 +10,7 @@ MongoClient = pymongo.MongoClient
 
 client = MongoClient()
 
-config_location = "../configs/database.config.json"
+config_location = "../configs_real/database.config.json"
 config = json.load(open(config_location, "r"))
 
 db = MongoClient(config["mongodb"]["address"], config["mongodb"]["port"])['polititweet']
@@ -18,7 +18,10 @@ db = MongoClient(config["mongodb"]["address"], config["mongodb"]["port"])['polit
 db.profiles.create_index([('id', pymongo.DESCENDING)], unique=True, background=True)
 
 def clean(dict):
-    del dict['_id']
+    if dict is None:
+        return
+    if '_id' in dict:
+        del dict['_id']
     return dict
 
 def time():
@@ -61,14 +64,15 @@ def getAllAccounts():
     return [clean(t) for t in db.accounts.find()]
 
 def writeAccountData(metadata):
-    return db.accounts.insert_one(metadata)
+    db.account_archive.insert_one(metadata)
+    return db.accounts.update({'id': metadata['id']}, clean(metadata), upsert=True)
 
 def getTotalAccounts():
-    return db.accounts.distinct('id').count(True)
+    return db.accounts.count()
 
 def writeTweet(tweet_data):
     tweet_data["retrieved"] = time()
-    db.tweets.insert_one(tweet_data)
+    db.tweets.update({'id': tweet_data['id']}, clean(tweet_data), upsert=True)
 
 def getHighestLowestArchivedStatus(account_id):
     lowest_archived_status = -1  # for the max_id parameter for subsequent searches

@@ -11,7 +11,7 @@ from tweepy import StreamListener
 import json
 import database
 
-config_location = "../configs/twitter.config.json"
+config_location = "../configs_real/twitter.config.json"
 config = json.load(open(config_location, "r"))
 
 consumer_key = config["consumerKey"]
@@ -38,6 +38,7 @@ class Handler(StreamListener):
         dataDict["deleted"] = False
         previous_userdata[dataDict["user"]["id"]] = dataDict["user"]
         database.writeTweet(dataDict)
+        database.writeAccountData(dataDict["user"])
         print("Detected tweet and wrote to file: " + dataDict["id_str"] + " of " + dataDict["user"]["id_str"])
         # except Exception as e:
         #     print(e)

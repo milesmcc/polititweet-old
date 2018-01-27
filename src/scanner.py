@@ -1,11 +1,8 @@
 import twitterinterface
-from time import gmtime, strftime
-import json
-import os
 import database
 from random import shuffle
 
-following = [802399136012177408]
+following = [802399136012177408, 945391013828313088]
 accounts = {}
 accounts_old = {}
 
@@ -20,15 +17,16 @@ retrieved from Twitter.
 It also does preliminary updating functions on the database.
 """
 def loadDatabase():
-    global following, following_old, accounts, account_data_old
+    global following, accounts, account_data_old
 
     print("Loading database...")
-    following = twitterinterface.api.GetFriendIDs()
+    following.extend(twitterinterface.api.GetFriendIDs())
     friend_data = twitterinterface.api.GetFriends()
     for account in friend_data:
         accounts[account.id] = account.AsDict()
         account_data_old = database.getAccountData(account.id)
-        database.writeAccountToDatabase(account.AsDict())
+        database.writeAccountData(account.AsDict())
+        accounts_old[account.id] = account_data_old
 
 
 """
@@ -78,31 +76,10 @@ def scanForDeletedTweets(account):
             if not twitterinterface.doesStatusExist(status["id"]):
                 print("[!] found deleted tweet: " + str(status["id"]))
                 deleted.append(status)
-                database.markTweetAsDeleted(account, status["id"])
+                database.markTweetAsDeleted(status["id"])
             print('[i] status unavailable via API but not deleted: ' + str(status["id"]))
     print("   ...found " + str(len(deleted)) + " deleted tweets.")
     return deleted
-
-
-"""
-Scan for deleted accounts, and if the account is deleted, mark it as so in the database.
-"""
-def scanForDeletedAccounts():
-    shuffle(following_old)
-    for account in following_old:
-        if account not in following:
-            try:
-                user = twitterinterface.api.GetUser(user_id=account)
-                print("    (user " + str(account) + " still exists, false alarm)")
-            except Exception as error:
-                try:
-                    if error[0][0]["code"] == 50:
-                        print("[!] User has been deleted: " + str(account))
-                        metadata = database.getAccountMetadata(account)
-                        metadata["deleted"] = True
-                        database.writeAccountMetadata(account, metadata)
-                except Exception as e:
-                    print(e)
 
 """
 Smart archive.
@@ -130,7 +107,7 @@ def smarchive(id):
         if twitterinterface.doesStatusExist(tweet):
             deleted_tweets.remove(tweet)
         else:
-            database.markTweetAsDeleted(id, tweet)
+            database.markTweetAsDeleted(tweet)
             print("[!] deleted tweet: " + str(tweet))
     print("Found " + str(len(deleted_tweets)) + " deleted tweets!")
 
@@ -189,11 +166,11 @@ def archiveAccount(id, aggressive=False):
     print("Archived " + str(len(statuses)) + " tweets & account data for " + str(id) + ".")
 
 while True:
-    try:
+    # try:
         loadDatabase()
         shuffle(following)
         while True:
             archiveAll()  # includes Smarchive, which does deleted tweets!
-    except Exception as e:
-        print(e)
-        print("Restarting...")
+    # except Exception as e:
+    #     print(e)
+    #     print("Restarting...")

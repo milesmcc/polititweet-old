@@ -91,7 +91,7 @@ class FigureHandler(tornado.web.RequestHandler):
 class TweetsHandler(tornado.web.RequestHandler):
     def write_error(self, status_code, **kwargs):
         injectHeaders(self)
-        self.render("pages/error.html", brand=brand, message=status_code(status_code), error=status_code)
+        self.render("pages/error.html", brand=brand, message=status_code_str(status_code), error=status_code)
     def get(self):
         injectHeaders(self)
         user = self.get_argument("account")
@@ -112,7 +112,7 @@ class TweetsHandler(tornado.web.RequestHandler):
 class TweetHandler(tornado.web.RequestHandler):
     def write_error(self, status_code, **kwargs):
         injectHeaders(self)
-        self.render("pages/error.html", brand=brand, message=status_code(status_code), error=status_code)
+        self.render("pages/error.html", brand=brand, message=status_code_str(status_code), error=status_code)
     def get(self):
         injectHeaders(self)
         user = self.get_argument("account")

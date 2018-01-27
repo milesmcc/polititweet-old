@@ -1,9 +1,8 @@
 import twitter
 import json
 import time
-import database
 
-config_location = "configs/twitter.config.json"
+config_location = "../configs_real/twitter.config.json"
 config = json.load(open(config_location, "r"))
 
 consumer_key = config["consumerKey"]
@@ -21,7 +20,6 @@ api = twitter.Api(consumer_key=consumer_key,
 Get the last 3200 statuses of a user from Twitter.
 """
 def getAllStatuses(id, lowest_archived_status=-1):
-    # TODO: fix this
     max_id = lowest_archived_status
     statuses = []
     if lowest_archived_status == -1:
@@ -30,7 +28,8 @@ def getAllStatuses(id, lowest_archived_status=-1):
     if lowest_archived_status < max_id and lowest_archived_status != -1: # for redundancy
         max_id = lowest_archived_status
     print("Lowest archived status: " + str(lowest_archived_status))
-    while len(statuses) < api.GetUser(user_id=id):
+    print(api.GetUser(user_id=id).AsDict())
+    while len(statuses) < api.GetUser(user_id=id).statuses_count:
         try:
             print("    ...from " + str(max_id))
             new_statuses = api.GetUserTimeline(user_id=id, count=200, max_id=max_id, trim_user=True)
@@ -45,7 +44,6 @@ def getAllStatuses(id, lowest_archived_status=-1):
     return statuses
 
 def getAllStatusesSince(id, since):
-    # TODO: fix this too-works, but is shaky
     statuses = api.GetUserTimeline(user_id=id, include_rts=False, count=200, trim_user=True, since_id=since)
     time.sleep(1)  # to avoid rate limiting
     if len(statuses) >= 200:  # more than 200 tweets since last grab
