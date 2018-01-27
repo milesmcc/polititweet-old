@@ -34,7 +34,7 @@ def getTweets(user_id):
     return [clean(t) for t in db.tweets.find({"user.id": int(user_id)})]
 
 def markTweetAsDeleted(tweet_id):
-    db.tweets.update({'id': int(tweet_id)}, {'deleted': True})
+    db.tweets.update({'id': int(tweet_id)}, {'$set': {"deleted": True}})
 
 def getTweet(tweet_id):
     return clean(db.tweets.find_one({'id': int(tweet_id)}))
@@ -60,19 +60,23 @@ def getAllDeletedTweets():
 def getDeletedTweets(user_id):
     return [clean(t) for t in db.tweets.find({'deleted': True, "user.id": int(user_id)}).sort([("id", pymongo.DESCENDING)])]
 
+def getDeletedTweetsCount(user_id):
+    print(db.tweets.find({'deleted': True, "user.id": int(user_id)}).count())
+    return db.tweets.find({'deleted': True, "user.id": int(user_id)}).count()
+
 def getAllAccounts():
     return [clean(t) for t in db.accounts.find()]
 
 def writeAccountData(metadata):
     db.account_archive.insert_one(metadata)
-    return db.accounts.update({'id': metadata['id']}, clean(metadata), upsert=True)
+    return db.accounts.update({'id': metadata['id']}, {"$set": clean(metadata)}, upsert=True)
 
 def getTotalAccounts():
     return db.accounts.count()
 
 def writeTweet(tweet_data):
     tweet_data["retrieved"] = time()
-    db.tweets.update({'id': tweet_data['id']}, clean(tweet_data), upsert=True)
+    db.tweets.update({'id': tweet_data['id']}, {"$set": clean(tweet_data)}, upsert=True)
 
 def getHighestLowestArchivedStatus(account_id):
     lowest_archived_status = -1  # for the max_id parameter for subsequent searches

@@ -24,8 +24,6 @@ auth.set_access_token(access_token_key, access_token_secret)
 
 api = tweepy.API(auth)
 
-previous_userdata = {}
-
 def time():
     return database.time()
 
@@ -36,12 +34,13 @@ class Handler(StreamListener):
             print("[i] not a tweet")
             return
         dataDict["deleted"] = False
-        previous_userdata[dataDict["user"]["id"]] = dataDict["user"]
+        userData = dataDict["user"]
+        dataDict["user"] = {
+            'id': dataDict["user"]["id"]
+        }
         database.writeTweet(dataDict)
-        database.writeAccountData(dataDict["user"])
+        database.writeAccountData(userData)
         print("Detected tweet and wrote to file: " + dataDict["id_str"] + " of " + dataDict["user"]["id_str"])
-        # except Exception as e:
-        #     print(e)
         return True
     def on_error(self, status):
         print("Error: " + str(status))

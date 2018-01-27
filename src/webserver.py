@@ -11,6 +11,7 @@ def unescape(text):
 def render(tweets):
     rendered = []
     for tweet in tweets:
+        print(tweet)
         tweet["text"] = unescape(tweet["text"])
         rendered.append(tweet)
     return rendered
@@ -40,10 +41,16 @@ class DeletedHandler(tornado.web.RequestHandler):
         self.render("pages/error.html", message=status_code_str(status_code), brand=brand, error=status_code)
     def get(self):
         injectHeaders(self)
-        deleted_tweets = database.getLatestDeletedTweets(32)
+        deleted_tweets = database.getAllDeletedTweets()
+        prepared_tweets = []
         for tweet in deleted_tweets:
-            tweet["user"] = database.getAccountData(tweet["user"]["id"])
-        self.render("pages/deleted.html", count=len(deleted_tweets), brand=brand, deleted=render(deleted_tweets))
+            if 'user' in tweet:
+                print(tweet)
+                tweet["user"] = database.getAccountData(tweet["user"]["id"])
+                # tweet's account is for some reason not archived in the db
+                if tweet["user"] is not None:
+                    prepared_tweets.append(tweet)  # don't show so as not to error
+        self.render("pages/deleted.html", count=len(prepared_tweets), brand=brand, deleted=render(deleted_tweets))
 class AboutHandler(tornado.web.RequestHandler):
     def write_error(self, status_code, **kwargs):
         injectHeaders(self)
@@ -63,17 +70,13 @@ class FiguresHandler(tornado.web.RequestHandler):
                 continue
             try:
                 account["archive_url"] = "figure?account=" + str(account["id"])
+                account["deleted_tweets_length"] = database.getDeletedTweetsCount(account["id"])
                 figures.append(account)
             except Exception as e:
                 print(account)
                 print(e)
                 continue
         figures_sorted = sorted(figures, key=itemgetter('name'))
-        for figure in figures_sorted:
-            try:
-                figure["deleted_tweets_length"] = len(database.getDeletedTweets(figure["id"]))
-            except KeyError:
-                figure["deleted_tweets_length"] = 0
         self.render("pages/figures.html", figures=figures_sorted, brand=brand)
 class FigureHandler(tornado.web.RequestHandler):
     def write_error(self, status_code, **kwargs):
@@ -86,7 +89,7 @@ class FigureHandler(tornado.web.RequestHandler):
         account["json"] = json.dumps(account)
         account["description"] = unescape(account["description"])
         account["deleted_tweets"] = database.getDeletedTweets(int(user))
-        account["deleted_tweets_length"] = len(account["deleted_tweets"])
+        account["deleted_tweets_length"] = database.getDeletedTweetsCount(user)
         self.render("pages/figure.html", brand=brand, figure=account)
 class TweetsHandler(tornado.web.RequestHandler):
     def write_error(self, status_code, **kwargs):
@@ -121,7 +124,7 @@ class TweetHandler(tornado.web.RequestHandler):
         account = database.getAccountData(int(user))
         account["json"] = json.dumps(account)
         account["description"] = unescape(account["description"])
-        account["deleted_tweets_length"] = len(database.getDeletedTweets(int(user)))
+        account["deleted_tweets_length"] = database.getDeletedTweetsCount(user)
         tweet_data["json"] = json.dumps(tweet_data)
         tweet_data["text"] = unescape(tweet_data["text"])
         if "favorite_count" not in tweet_data:  # for some reason if =0 twitter omits favorite count

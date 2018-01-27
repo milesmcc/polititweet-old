@@ -163,7 +163,9 @@
                     {{tweet["created_at"]}}
                   </small>
                 </i>
+                {% if tweet["deleted"] %}
                 <span class="label label-danger">DELETED</span>
+                {% end %}
                 <span class="pull-right arvo"><small>VIA POLITITWEET.ORG</small></span>
               </p>
             </div>
