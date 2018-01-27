@@ -2,5 +2,8 @@
   "consumerKey": "XXXXX",
   "consumerSecret": "XXXXX",
   "accessTokenKey": "XXXXX-XXXXX",
-  "accessTokenSecret": "XXXXX"
+  "accessTokenSecret": "XXXXX",
+  "monitorList": "list:polititweetorg/monitored-accounts",
+  "monitorListOwner": "polititweetorg",
+  "monitorListName": "monitored-accounts"
 }

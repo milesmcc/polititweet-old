@@ -1,10 +1,12 @@
 import twitterinterface
 import database
 from random import shuffle
+import json
+
+config_location = "../configs_real/database.config.json"
+config = json.load(open(config_location, "r"))
 
 following = [802399136012177408, 945391013828313088]
-accounts = {}
-accounts_old = {}
 
 """
 Loads the followers into memory, as well as their data.
@@ -17,16 +19,14 @@ retrieved from Twitter.
 It also does preliminary updating functions on the database.
 """
 def loadDatabase():
-    global following, accounts, account_data_old
+    global following
 
     print("Loading database...")
-    following.extend(twitterinterface.api.GetFriendIDs())
+    following = []
+    following.extend(twitterinterface.api.GetListMembers(owner_screen_name=config["monitorListOwner"], slug="monitored-accounts"))
     friend_data = twitterinterface.api.GetFriends()
     for account in friend_data:
-        accounts[account.id] = account.AsDict()
-        account_data_old = database.getAccountData(account.id)
         database.writeAccountData(account.AsDict())
-        accounts_old[account.id] = account_data_old
 
 """
 Smart archive.

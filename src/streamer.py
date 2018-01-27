@@ -18,6 +18,7 @@ consumer_key = config["consumerKey"]
 consumer_secret = config["consumerSecret"]
 access_token_key = config["accessTokenKey"]
 access_token_secret = config["accessTokenSecret"]
+trackList = config["monitorList"]
 
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token_key, access_token_secret)
@@ -48,6 +49,6 @@ class Handler(StreamListener):
 while True:
     try:
         stream = tweepy.Stream(auth=api.auth, listener=Handler())
-        stream.userstream()
+        stream.filter(track=trackList)
     except Exception as e:
         print(e)
