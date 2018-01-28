@@ -86,11 +86,11 @@ def archiveAll(repeat=True):
 
 
 while True:
-    # try:
+    try:
         loadDatabase()
         shuffle(following)
         while True:
             archiveAll()  # includes Smarchive, which does deleted tweets!
-    # except Exception as e:
-    #     print(e)
-    #     print("Restarting...")
+    except Exception as e:
+        print(e)
+        print("Restarting...")

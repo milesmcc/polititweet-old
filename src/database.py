@@ -46,7 +46,7 @@ def getAccountData(account_id):
     return clean(db.accounts.find_one({'id': int(account_id)}))
 
 def hasAccountData(account_id):
-    return getAccountData(account_id) != None;
+    return db.accounts.find({'id': int(account_id)}).count() > 0
 
 def getTotalDeletedTweets():
     return db.tweets.find({'deleted': True}).count()
