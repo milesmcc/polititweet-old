@@ -52,8 +52,8 @@ class Handler(StreamListener):
         print("Error: " + str(status))
 
 while True:
-    # try:
+    try:
         stream = tweepy.Stream(auth=api.auth, listener=Handler())
         stream.filter(follow=[str(id) for id in following])
-    # except Exception as e:
-    #     print(e)
+    except Exception as e:
+        print(e)
