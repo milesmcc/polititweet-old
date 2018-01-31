@@ -74,13 +74,21 @@ def archiveAll(repeat=True):
     print("Processing accounts first: " + str(first))
     for account in first:
         if not database.hasAccountData(account) or repeat:
-            smarchive(account)
+            try:
+                smarchive(account)
+            except Exception as e:
+                print("Error: " + str(e))
+                continue
         else:
             print("Already archived " + str(account))
     print("Now processing others...")
     for account in following:
         if not database.hasAccountData(account) or repeat:
-            smarchive(account)
+            try:
+                smarchive(account)
+            except Exception as e:
+                print("Error: " + str(e))
+                continue
         else:
             print("Already archived " + str(account))
 
